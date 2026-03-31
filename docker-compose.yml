@@ -11,11 +11,13 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    restart: unless-stopped
 
   backend:
     build: ./backend
@@ -28,20 +30,18 @@ services:
     depends_on:
       - db
       - redis
-    volumes:
-      - ./backend/app:/app/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
     ports:
-      - "3000:3000"
+      - "3000:80"
     depends_on:
       - backend
-    volumes:
-      - ./frontend/src:/app/src
-    environment:
-      - VITE_API_URL=http://localhost:8000
+    restart: unless-stopped
 
 volumes:
   pgdata:
