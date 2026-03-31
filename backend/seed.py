@@ -16,7 +16,8 @@ from app.models.commission import CommissionRule, Commission, MonthlyClosing, Ru
 from app.models.player_event import PlayerEvent, EventType
 from app.core.security import hash_password
 
-DATABASE_URL = "postgresql+asyncpg://admin:admin123@localhost:5432/igaming_affiliates"
+import os
+DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql+asyncpg://admin:admin123@localhost:5432/igaming_affiliates")
 
 
 async def seed():
